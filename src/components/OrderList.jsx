@@ -60,7 +60,9 @@ export default function OrderList({
                 flexWrap: "wrap",
               }}
             >
-              <button onClick={() => onDecrease(index)} style={buttonStyle}>-</button>
+              <button onClick={() => onDecrease(index)} style={buttonStyle}>
+                -
+              </button>
               <input
                 type="text"
                 value={inputValue}
@@ -68,10 +70,23 @@ export default function OrderList({
                 onBlur={handleInputBlur}
                 inputMode="numeric"
                 maxLength={5}
-                style={inputStyle}
+                style={{
+                  width: 50,
+                  height: 45,
+                  fontSize: 16,
+                  textAlign: "center",
+                  borderRadius: 10,
+                  background: "#111",
+                  color: "#fff",
+                  border: "1px solid #333",
+                }}
               />
-              <button onClick={() => onIncrease(index)} style={buttonStyle}>+</button>
-              <button onClick={() => onDelete(index)} style={buttonStyle}>🗑</button>
+              <button onClick={() => onIncrease(index)} style={buttonStyle}>
+                +
+              </button>
+              <button onClick={() => onDelete(index)} style={buttonStyle}>
+                🗑
+              </button>
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
                 <div style={{ fontSize: 14 }}>На складе: {p.stock}</div>
                 <label style={{ display: "flex", alignItems: "center", gap: 5 }}>
@@ -108,22 +123,13 @@ export default function OrderList({
 const buttonStyle = {
   width: 45,
   height: 45,
-  fontSize: 18,
-  textAlign: "center",
-  lineHeight: "45px",
+  fontSize: 22,
   borderRadius: 10,
   background: "#111",
   color: "#fff",
   border: "none",
-};
-
-const inputStyle = {
-  width: 50,
-  height: 45,
-  fontSize: 16,
-  textAlign: "center",
-  borderRadius: 10,
-  background: "#111",
-  color: "#fff",
-  border: "1px solid #333",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: 0,
 };
