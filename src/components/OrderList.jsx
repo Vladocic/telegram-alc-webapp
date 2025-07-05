@@ -1,3 +1,5 @@
+""import { useEffect, useState } from "react";
+
 export default function OrderList({
   products,
   total,
@@ -9,6 +11,7 @@ export default function OrderList({
   onDecrease,
   onDelete,
   onToggleStock,
+  onSetQty,
   paymentMethod,
   convertedTotal,
 }) {
@@ -20,59 +23,109 @@ export default function OrderList({
 
       {products.length === 0 && <p>Корзина пуста</p>}
 
-      {products.map((p, index) => (
-        <div key={index} style={{ marginBottom: 20 }}>
-          <div>
-            {index + 1}. Пиво {p.name} — {p.volume} л — {p.qty} шт: ฿{p.price * p.qty}
-          </div>
+      {products.map((p, index) => {
+        const [inputValue, setInputValue] = useState(p.qty.toString());
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <button style={{ width: 40, height: 40 }} onClick={() => onDecrease(index)}>-</button>
+        useEffect(() => {
+          setInputValue(p.qty.toString());
+        }, [p.qty]);
 
-            <input
-              type="number"
-              value={p.qty}
-              min={1}
-              max={99999}
-              onChange={(e) => {
-                const value = Math.max(1, parseInt(e.target.value) || 1);
-                onDecrease(index);
-                for (let i = 1; i < value - p.qty; i++) onIncrease(index);
+        const handleInputChange = (e) => {
+          const val = e.target.value;
+          if (/^\d*$/.test(val)) {
+            setInputValue(val);
+          }
+        };
+
+        const handleInputBlur = () => {
+          const num = parseInt(inputValue, 10);
+          if (!isNaN(num) && num >= 1) {
+            onSetQty(index, num);
+          } else {
+            setInputValue(p.qty.toString());
+          }
+        };
+
+        return (
+          <div key={index} style={{ marginBottom: 10 }}>
+            <div>
+              {index + 1}. Пиво {p.name} — {p.volume} л — {p.qty} шт: ฿{p.price * p.qty}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                flexWrap: "wrap",
               }}
-              style={{ width: 50, height: 40, fontSize: 16, textAlign: 'center' }}
-            />
-
-            <button style={{ width: 40, height: 40 }} onClick={() => onIncrease(index)}>+</button>
-            <button style={{ width: 40, height: 40 }} onClick={() => onDelete(index)}>🗑</button>
-
-            <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 10 }}>
-              <span style={{ fontSize: 14 }}>На складе: {p.stock ?? 0}</span>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <input
-                  type="checkbox"
-                  checked={Boolean(p.fromStock)}
-                  onChange={() => onToggleStock(index)}
-                />
-                Со склада
-              </label>
+            >
+              <button onClick={() => onDecrease(index)} style={buttonStyle}>
+                -
+              </button>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                inputMode="numeric"
+                maxLength={5}
+                style={{
+                  width: 50,
+                  height: 45,
+                  fontSize: 16,
+                  textAlign: "center",
+                  borderRadius: 10,
+                  background: "#111",
+                  color: "#fff",
+                  border: "1px solid #333",
+                }}
+              />
+              <button onClick={() => onIncrease(index)} style={buttonStyle}>
+                +
+              </button>
+              <button onClick={() => onDelete(index)} style={buttonStyle}>
+                🗑
+              </button>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                <div style={{ fontSize: 14 }}>На складе: {p.stock}</div>
+                <label style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                  <input
+                    type="checkbox"
+                    checked={Boolean(p.fromStock)}
+                    onChange={() => onToggleStock(index)}
+                  />
+                  Со склада
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <div style={{ marginTop: 10 }}>
         🚚 Доставка: {delivery === 0 ? "Бесплатно" : `฿${delivery}`}
       </div>
 
       <div>
-        🎁 Скидка: ฿{discount.toFixed(2)}{' '}
-        ({discountType === 'percent' ? `${discountValue}%` : 'фикс.'})
+        🎁 Скидка: ฿{discount.toFixed(2)} (
+        {discountType === "percent" ? `${discountValue}%` : "фикс."})
       </div>
 
-      <div style={{ fontWeight: 'bold', marginTop: 5 }}>
+      <div style={{ fontWeight: "bold", marginTop: 5 }}>
         💰 Итог с доставкой: ฿{Math.round(fullTotal)}
-        {paymentMethod === 'usd' && convertedTotal && <> (${convertedTotal})</>}
+        {paymentMethod === "usd" && convertedTotal && <> (${convertedTotal})</>}
       </div>
     </div>
   );
 }
+
+const buttonStyle = {
+  width: 45,
+  height: 45,
+  fontSize: 18,
+  borderRadius: 10,
+  background: "#111",
+  color: "#fff",
+  border: "none",
+};
