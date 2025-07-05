@@ -51,7 +51,7 @@ export default function ProductSelector({ catalog, onAdd }) {
                 borderBottom: "1px solid #444",
               }}
             >
-              {item.name} — ₹{item.price} ({item.stock} в наличии)
+              {item.name} — ฿{item.price} ({item.stock} в наличии)
             </div>
           ))}
           {filteredCatalog.length === 0 && (
