@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import DiscountInput from "./components/DiscountInput";
 import OrderList from "./components/OrderList";
 import ProductSelector from "./components/ProductSelector";
-import { calculateDelivery } from "./utils/delivery";
 import PaymentMethodSelect from "./components/PaymentMethodSelect";
-
+import { calculateDelivery } from "./utils/delivery";
 
 function App() {
   const tg = window.Telegram?.WebApp;
@@ -21,15 +20,13 @@ function App() {
   const [rawTotal, setRawTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
-  const delivery = calculateDelivery(rawTotal);
-
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const exchangeRate = 33; // фикс. курс для USD
+
+  const delivery = calculateDelivery(rawTotal);
+  const exchangeRate = 33;
   const convertedTotal = paymentMethod === "usd"
     ? ((total + delivery) / exchangeRate).toFixed(2)
     : null;
-
-
 
   useEffect(() => {
     const sum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
@@ -57,12 +54,13 @@ function App() {
           discount,
           delivery,
           total: total + delivery,
+          paymentMethod,
         })
       );
     });
 
     return () => tg.MainButton.offClick();
-  }, [products, discount, total]);
+  }, [products, discount, total, delivery, paymentMethod]);
 
   const handleAddProduct = (product) => {
     setProducts((prev) => {
@@ -75,11 +73,11 @@ function App() {
       if (existing) {
         return prev.map((p) =>
           p === existing
-            ? { ...p, qty: p.qty + product.qty, fromStock: p.fromStock ?? false }
+            ? { ...p, qty: p.qty + 1, fromStock: p.fromStock ?? false }
             : p
         );
       } else {
-        return [...prev, { ...product, fromStock: false }];
+        return [...prev, { ...product, qty: 1, fromStock: false }];
       }
     });
   };
@@ -109,7 +107,6 @@ function App() {
   };
 
   const toggleStockSource = (index) => {
-    console.log("Чекбокс нажали для позиции:", index);
     setProducts((prev) =>
       prev.map((p, i) =>
         i === index ? { ...p, fromStock: !p.fromStock } : p
@@ -134,8 +131,6 @@ function App() {
         onToggleStock={toggleStockSource}
         paymentMethod={paymentMethod}
         convertedTotal={convertedTotal}
-
-
       />
 
       <DiscountInput
@@ -150,7 +145,6 @@ function App() {
         setPaymentMethod={setPaymentMethod}
       />
     </div>
-
   );
 }
 

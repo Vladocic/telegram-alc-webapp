@@ -30,14 +30,16 @@ export default function DiscountInput({
 
       <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
         <input
-          type="text"
+          type="number"
+          inputMode="numeric"
           value={discountValue}
           onChange={handleChange}
           placeholder="0"
           style={{
             width: "80px",
             fontSize: "16px",
-            padding: "5px 8px"
+            padding: "6px 8px",
+            borderRadius: "4px",
           }}
         />
 

@@ -11,13 +11,12 @@ export default function OrderList({
     onToggleStock,
     paymentMethod,
     convertedTotal
-
 }) {
     const fullTotal = total + delivery;
 
     return (
         <div>
-            <h3>🧾 Список товаров</h3>
+            <h3>🗋️ Список товаров</h3>
 
             {products.length === 0 && <p>Корзина пуста</p>}
 
@@ -36,7 +35,7 @@ export default function OrderList({
                         <label style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                             <input
                                 type="checkbox"
-                                checked={Boolean(p.fromStock)}  // гарантирует true/false
+                                checked={Boolean(p.fromStock)}
                                 onChange={() => onToggleStock(index)}
                             />
                             Со склада
