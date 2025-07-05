@@ -40,7 +40,11 @@ export default function OrderList({
         const handleInputBlur = () => {
           const num = parseInt(inputValue, 10);
           if (!isNaN(num)) {
-            onSetQty(index, Math.max(0, num));
+            if (num < 1) {
+              onDelete(index); // если 0 — удалить товар
+            } else {
+              onSetQty(index, num);
+            }
           } else {
             setInputValue(p.qty.toString());
           }
@@ -61,8 +65,9 @@ export default function OrderList({
               }}
             >
               <button onClick={() => onDecrease(index)} style={buttonStyle}>
-                -
+                <span style={centerText}>−</span>
               </button>
+
               <input
                 type="text"
                 value={inputValue}
@@ -70,23 +75,17 @@ export default function OrderList({
                 onBlur={handleInputBlur}
                 inputMode="numeric"
                 maxLength={5}
-                style={{
-                  width: 50,
-                  height: 45,
-                  fontSize: 16,
-                  textAlign: "center",
-                  borderRadius: 10,
-                  background: "#111",
-                  color: "#fff",
-                  border: "1px solid #333",
-                }}
+                style={inputStyle}
               />
+
               <button onClick={() => onIncrease(index)} style={buttonStyle}>
-                +
+                <span style={centerText}>+</span>
               </button>
+
               <button onClick={() => onDelete(index)} style={buttonStyle}>
-                🗑
+                <span style={centerText}>🗑</span>
               </button>
+
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
                 <div style={{ fontSize: 14 }}>На складе: {p.stock}</div>
                 <label style={{ display: "flex", alignItems: "center", gap: 5 }}>
@@ -123,13 +122,28 @@ export default function OrderList({
 const buttonStyle = {
   width: 45,
   height: 45,
-  fontSize: 22,
+  fontSize: 18,
   borderRadius: 10,
   background: "#111",
   color: "#fff",
   border: "none",
   display: "flex",
-  justifyContent: "center",
   alignItems: "center",
-  padding: 0,
+  justifyContent: "center",
+};
+
+const inputStyle = {
+  width: 50,
+  height: 45,
+  fontSize: 16,
+  textAlign: "center",
+  borderRadius: 10,
+  background: "#111",
+  color: "#fff",
+  border: "1px solid #333",
+};
+
+const centerText = {
+  lineHeight: "1",
+  textAlign: "center",
 };
