@@ -16,7 +16,7 @@ function App() {
 
   const [products, setProducts] = useState([]);
   const [discountValue, setDiscountValue] = useState(0);
-  const [discountType, setDiscountType] = useState("fixed"); // "fixed" or "percent"
+  const [discountType, setDiscountType] = useState("fixed");
   const [rawTotal, setRawTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
@@ -73,11 +73,11 @@ function App() {
       if (existing) {
         return prev.map((p) =>
           p === existing
-            ? { ...p, qty: p.qty + 1, fromStock: p.fromStock ?? false }
+            ? { ...p, qty: p.qty + product.qty, fromStock: p.fromStock ?? false }
             : p
         );
       } else {
-        return [...prev, { ...product, qty: 1, fromStock: false }];
+        return [...prev, { ...product, fromStock: false }];
       }
     });
   };

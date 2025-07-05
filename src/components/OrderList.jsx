@@ -16,7 +16,7 @@ export default function OrderList({
 
     return (
         <div>
-            <h3>🗋️ Список товаров</h3>
+            <h3>🧾 Список товаров</h3>
 
             {products.length === 0 && <p>Корзина пуста</p>}
 
@@ -25,13 +25,18 @@ export default function OrderList({
                     <div>
                         {index + 1}. Пиво {p.name} — {p.volume} л — {p.qty} шт: ฿{p.price * p.qty}
                     </div>
+                    <div style={{ fontSize: '14px', color: '#ccc', marginTop: 2 }}>
+                        На складе: {p.stock ?? "-"}
+                    </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                         <button onClick={() => onDecrease(index)}>-</button>
                         <span>{p.qty}</span>
                         <button onClick={() => onIncrease(index)}>+</button>
                         <button onClick={() => onDelete(index)}>🗑</button>
+                    </div>
 
+                    <div style={{ marginTop: 5 }}>
                         <label style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                             <input
                                 type="checkbox"

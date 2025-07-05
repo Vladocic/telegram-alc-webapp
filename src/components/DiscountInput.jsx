@@ -1,10 +1,11 @@
+// src/components/DiscountInput.jsx
 export default function DiscountInput({
   discountValue,
   setDiscountValue,
   discountType,
   setDiscountType,
 }) {
-  const handleChange = (e) => {
+  const handleValueChange = (e) => {
     let value = e.target.value;
 
     if (value === "") {
@@ -24,48 +25,41 @@ export default function DiscountInput({
     }
   };
 
-  return (
-    <div style={{ marginTop: 20 }}>
-      <h4>🎁 Скидка</h4>
+  const handleTypeChange = (e) => {
+    const newType = e.target.value;
+    setDiscountType(newType);
 
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+    // если переключили на проценты и значение больше 100 — ограничим
+    if (newType === "percent" && discountValue > 100) {
+      setDiscountValue(100);
+    }
+  };
+
+  return (
+    <div style={{ marginTop: 25 }}>
+      <h4 style={{ marginBottom: 8 }}>🎁 Скидка</h4>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <input
           type="number"
-          inputMode="numeric"
+          min="0"
           value={discountValue}
-          onChange={handleChange}
+          onChange={handleValueChange}
           placeholder="0"
           style={{
             width: "80px",
             fontSize: "16px",
-            padding: "6px 8px",
-            borderRadius: "4px",
+            padding: "5px 8px",
           }}
         />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-          <label>
-            <input
-              type="radio"
-              name="discountType"
-              value="fixed"
-              checked={discountType === "fixed"}
-              onChange={() => setDiscountType("fixed")}
-            />
-            {" "}฿ Баты
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              name="discountType"
-              value="percent"
-              checked={discountType === "percent"}
-              onChange={() => setDiscountType("percent")}
-            />
-            {" "}％ Проценты
-          </label>
-        </div>
+        <select
+          value={discountType}
+          onChange={handleTypeChange}
+          style={{ padding: "6px 10px", fontSize: "14px" }}
+        >
+          <option value="fixed">฿ Баты</option>
+          <option value="percent">％ Проценты</option>
+        </select>
       </div>
     </div>
   );
