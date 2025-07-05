@@ -1,4 +1,3 @@
-// src/components/DiscountInput.jsx
 export default function DiscountInput({
   discountValue,
   setDiscountValue,
@@ -8,17 +7,21 @@ export default function DiscountInput({
   const handleValueChange = (e) => {
     let value = e.target.value;
 
+    // Только цифры
+    if (!/^[0-9]*$/.test(value)) return;
+
+    // Удалить лидирующие нули, кроме одиночного 0
+    value = value.replace(/^0+(?!$)/, "");
+
     if (value === "") {
       setDiscountValue("");
       return;
     }
 
     const num = Number(value);
-    if (isNaN(num)) return;
 
     if (discountType === "percent") {
-      if (num < 0) setDiscountValue(0);
-      else if (num > 100) setDiscountValue(100);
+      if (num > 100) setDiscountValue(100);
       else setDiscountValue(num);
     } else {
       setDiscountValue(Math.max(0, num));
@@ -29,7 +32,6 @@ export default function DiscountInput({
     const newType = e.target.value;
     setDiscountType(newType);
 
-    // если переключили на проценты и значение больше 100 — ограничим
     if (newType === "percent" && discountValue > 100) {
       setDiscountValue(100);
     }
@@ -40,15 +42,16 @@ export default function DiscountInput({
       <h4 style={{ marginBottom: 8 }}>🎁 Скидка</h4>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <input
-          type="number"
-          min="0"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={discountValue}
           onChange={handleValueChange}
           placeholder="0"
           style={{
             width: "80px",
-            fontSize: "16px",
-            padding: "5px 8px",
+            fontSize: "16px", // iOS: предотвращает zoom
+            padding: "6px 10px",
           }}
         />
 

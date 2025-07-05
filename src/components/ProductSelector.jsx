@@ -21,7 +21,7 @@ export default function ProductSelector({ catalog, onAdd }) {
 
   return (
     <div style={{ marginBottom: 20 }}>
-      <h3>🍚 Добавить товар</h3>
+      <h3>🛒 Добавить товар</h3>
       <input
         type="text"
         placeholder="Введите название..."
