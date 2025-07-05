@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useEffect, useState } from "react";
 import DiscountInput from "./components/DiscountInput";
 import OrderList from "./components/OrderList";
@@ -24,9 +23,10 @@ function App() {
 
   const delivery = calculateDelivery(rawTotal);
   const exchangeRate = 33;
-  const convertedTotal = paymentMethod === "usd"
-    ? ((total + delivery) / exchangeRate).toFixed(2)
-    : null;
+  const convertedTotal =
+    paymentMethod === "usd"
+      ? ((total + delivery) / exchangeRate).toFixed(2)
+      : null;
 
   useEffect(() => {
     const sum = products.reduce((acc, item) => acc + item.price * item.qty, 0);
@@ -34,8 +34,8 @@ function App() {
 
     const calcDiscount =
       discountType === "percent"
-        ? ((sum * (discountValue || 0)) / 100)
-        : (discountValue || 0);
+        ? (sum * (discountValue || 0)) / 100
+        : discountValue || 0;
 
     setDiscount(calcDiscount);
     setTotal(Math.max(sum - calcDiscount, 0));
@@ -73,7 +73,11 @@ function App() {
       if (existing) {
         return prev.map((p) =>
           p === existing
-            ? { ...p, qty: p.qty + product.qty, fromStock: p.fromStock ?? false }
+            ? {
+                ...p,
+                qty: p.qty + product.qty,
+                fromStock: p.fromStock ?? false,
+              }
             : p
         );
       } else {
@@ -114,6 +118,14 @@ function App() {
     );
   };
 
+  const setQty = (index, value) => {
+    setProducts((prev) => {
+      const updated = [...prev];
+      updated[index].qty = value;
+      return updated;
+    });
+  };
+
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
       <ProductSelector catalog={catalog} onAdd={handleAddProduct} />
@@ -129,6 +141,7 @@ function App() {
         onDecrease={decreaseQty}
         onDelete={deleteProduct}
         onToggleStock={toggleStockSource}
+        onSetQty={setQty}
         paymentMethod={paymentMethod}
         convertedTotal={convertedTotal}
       />
