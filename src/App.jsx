@@ -42,6 +42,8 @@ function App() {
   }, [products, discountValue, discountType]);
 
   useEffect(() => {
+    console.log("tg:", tg); // 👈
+
     if (!tg) return;
 
     tg.MainButton.setParams({ text: "Оформить заказ" });
