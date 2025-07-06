@@ -8,7 +8,6 @@ import { calculateDelivery } from "./utils/delivery";
 function App() {
   const tg = window.Telegram?.WebApp;
 
-  // ⚙️ Замените на ваш токен и chat_id
   const BOT_TOKEN = "REMOVED";
   const CHAT_ID = "-1002762004711";
 
@@ -59,12 +58,7 @@ function App() {
   useEffect(() => {
     if (!tg) return;
 
-    tg.MainButton.setParams({ text: "Оформить заказ" });
-    tg.MainButton.show();
-
-    sendLogToTelegram("MainButton активирован");
-
-    tg.MainButton.onClick(() => {
+    const handleClick = () => {
       const payload = {
         products,
         discount,
@@ -75,9 +69,18 @@ function App() {
 
       sendLogToTelegram("📦 Отправка данных:\n" + JSON.stringify(payload, null, 2));
       tg.sendData(JSON.stringify(payload));
-    });
+    };
 
-    return () => tg.MainButton.offClick();
+    tg.MainButton.setParams({ text: "Оформить заказ" });
+    tg.MainButton.show();
+
+    sendLogToTelegram("MainButton активирован");
+
+    tg.MainButton.onClick(handleClick);
+
+    return () => {
+      tg.MainButton.offClick(handleClick); // удаление конкретного обработчика
+    };
   }, [products, discount, total, delivery, paymentMethod]);
 
   const handleAddProduct = (product) => {
