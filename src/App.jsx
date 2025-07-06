@@ -7,6 +7,7 @@ import { calculateDelivery } from "./utils/delivery";
 
 function App() {
   const tg = window.Telegram?.WebApp;
+  const queryId = tg?.initDataUnsafe?.query_id;
 
   const BOT_TOKEN = "REMOVED";
   const CHAT_ID = "-1002762004711";
@@ -56,7 +57,10 @@ function App() {
   }, [products, discountValue, discountType]);
 
   useEffect(() => {
-    if (!tg) return;
+    if (!tg || !queryId) {
+      sendLogToTelegram("⛔️ Telegram API или query_id не найден");
+      return;
+    }
 
     const handleClick = () => {
       const payload = {
@@ -65,22 +69,23 @@ function App() {
         delivery,
         total: total + delivery,
         paymentMethod,
+        query_id: queryId,
       };
 
       sendLogToTelegram("📦 Отправка данных:\n" + JSON.stringify(payload, null, 2));
+
       tg.sendData(JSON.stringify(payload));
+      tg.close();
     };
 
     tg.MainButton.setParams({ text: "Оформить заказ" });
     tg.MainButton.show();
 
-    sendLogToTelegram("MainButton активирован");
+    sendLogToTelegram("✅ MainButton активирован");
 
     tg.MainButton.onClick(handleClick);
 
-    return () => {
-      tg.MainButton.offClick(handleClick); // удаление конкретного обработчика
-    };
+    return () => tg.MainButton.offClick(handleClick);
   }, [products, discount, total, delivery, paymentMethod]);
 
   const handleAddProduct = (product) => {
