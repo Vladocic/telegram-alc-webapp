@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import DiscountInput from "./components/DiscountInput";
 import OrderList from "./components/OrderList";
-import ProductSelector from "./components/ProductSelector";
 import PaymentMethodSelect from "./components/PaymentMethodSelect";
+import ProductSelector from "./components/ProductSelector";
 import { calculateDelivery } from "./utils/delivery";
 
 function App() {
@@ -48,15 +48,15 @@ function App() {
     tg.MainButton.show();
 
     tg.MainButton.onClick(() => {
-      tg.sendData(
-        JSON.stringify({
-          products,
-          discount,
-          delivery,
-          total: total + delivery,
-          paymentMethod,
-        })
-      );
+      const payload = {
+        products,
+        discount,
+        delivery,
+        total: total + delivery,
+        paymentMethod,
+      };
+
+      tg.sendData(JSON.stringify(payload));
     });
 
     return () => tg.MainButton.offClick();
@@ -74,10 +74,10 @@ function App() {
         return prev.map((p) =>
           p === existing
             ? {
-                ...p,
-                qty: p.qty + product.qty,
-                fromStock: p.fromStock ?? false,
-              }
+              ...p,
+              qty: p.qty + product.qty,
+              fromStock: p.fromStock ?? false,
+            }
             : p
         );
       } else {
