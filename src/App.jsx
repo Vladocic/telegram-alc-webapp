@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useEffect, useState } from "react";
 import DiscountInput from "./components/DiscountInput";
 import OrderList from "./components/OrderList";
@@ -7,21 +8,6 @@ import { calculateDelivery } from "./utils/delivery";
 
 function App() {
   const tg = window.Telegram?.WebApp;
-  const queryId = tg?.initDataUnsafe?.query_id;
-
-  const BOT_TOKEN = "REMOVED";
-  const CHAT_ID = "-1002762004711";
-
-  function sendLogToTelegram(text) {
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: `[WebApp] ${text}`,
-      }),
-    }).catch(console.error);
-  }
 
   const catalog = [
     { id: 1, name: "Heineken", volume: 0.62, price: 156, stock: 8 },
@@ -57,10 +43,7 @@ function App() {
   }, [products, discountValue, discountType]);
 
   useEffect(() => {
-    if (!tg || !queryId) {
-      sendLogToTelegram("⛔️ Telegram API или query_id не найден");
-      return;
-    }
+    if (!tg) return;
 
     const handleClick = () => {
       const payload = {
@@ -69,23 +52,19 @@ function App() {
         delivery,
         total: total + delivery,
         paymentMethod,
-        query_id: queryId,
       };
 
-      sendLogToTelegram("📦 Отправка данных:\n" + JSON.stringify(payload, null, 2));
-
       tg.sendData(JSON.stringify(payload));
-      tg.close();
+      tg.close(); // закрываем WebApp после отправки
     };
 
     tg.MainButton.setParams({ text: "Оформить заказ" });
     tg.MainButton.show();
-
-    sendLogToTelegram("✅ MainButton активирован");
-
     tg.MainButton.onClick(handleClick);
 
-    return () => tg.MainButton.offClick(handleClick);
+    return () => {
+      tg.MainButton.offClick(handleClick);
+    };
   }, [products, discount, total, delivery, paymentMethod]);
 
   const handleAddProduct = (product) => {
