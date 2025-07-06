@@ -8,6 +8,21 @@ import { calculateDelivery } from "./utils/delivery";
 function App() {
   const tg = window.Telegram?.WebApp;
 
+  // ⚙️ Замените на ваш токен и chat_id
+  const BOT_TOKEN = "REMOVED";
+  const CHAT_ID = "-1002762004711";
+
+  function sendLogToTelegram(text) {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: `[WebApp] ${text}`,
+      }),
+    }).catch(console.error);
+  }
+
   const catalog = [
     { id: 1, name: "Heineken", volume: 0.62, price: 156, stock: 8 },
     { id: 2, name: "Corona", volume: 0.33, price: 138, stock: 12 },
@@ -42,12 +57,12 @@ function App() {
   }, [products, discountValue, discountType]);
 
   useEffect(() => {
-    console.log("tg:", tg); // 👈
-
     if (!tg) return;
 
     tg.MainButton.setParams({ text: "Оформить заказ" });
     tg.MainButton.show();
+
+    sendLogToTelegram("MainButton активирован");
 
     tg.MainButton.onClick(() => {
       const payload = {
@@ -58,9 +73,7 @@ function App() {
         paymentMethod,
       };
 
-      console.log("📦 Отправка данных:", payload); // 👈
-
-
+      sendLogToTelegram("📦 Отправка данных:\n" + JSON.stringify(payload, null, 2));
       tg.sendData(JSON.stringify(payload));
     });
 
@@ -79,10 +92,10 @@ function App() {
         return prev.map((p) =>
           p === existing
             ? {
-              ...p,
-              qty: p.qty + product.qty,
-              fromStock: p.fromStock ?? false,
-            }
+                ...p,
+                qty: p.qty + product.qty,
+                fromStock: p.fromStock ?? false,
+              }
             : p
         );
       } else {
