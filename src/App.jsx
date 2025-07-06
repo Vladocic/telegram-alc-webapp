@@ -58,6 +58,9 @@ function App() {
         paymentMethod,
       };
 
+      console.log("📦 Отправка данных:", payload); // 👈
+
+
       tg.sendData(JSON.stringify(payload));
     });
 
