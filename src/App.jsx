@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useEffect, useState } from "react";
 import DiscountInput from "./components/DiscountInput";
 import OrderList from "./components/OrderList";
@@ -45,7 +44,7 @@ function App() {
   useEffect(() => {
     if (!tg) return;
 
-    const handleClick = () => {
+    const handleClick = async () => {
       const payload = {
         products,
         discount,
@@ -54,8 +53,22 @@ function App() {
         paymentMethod,
       };
 
-      tg.sendData(JSON.stringify(payload));
-      tg.close(); // закрываем WebApp после отправки
+      try {
+        const response = await fetch("/api/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          throw new Error("Ошибка при оформлении заказа");
+        }
+
+        tg.close(); // ✅ Закрытие WebApp
+      } catch (error) {
+        alert("❌ Не удалось оформить заказ");
+        console.error(error);
+      }
     };
 
     tg.MainButton.setParams({ text: "Оформить заказ" });
