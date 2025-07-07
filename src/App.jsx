@@ -51,6 +51,8 @@ function App() {
         delivery,
         total: total + delivery,
         paymentMethod,
+        chat_id: tg.initDataUnsafe.user?.id,
+
       };
 
       try {
@@ -64,7 +66,7 @@ function App() {
           throw new Error("Ошибка при оформлении заказа");
         }
 
-        tg.close(); // ✅ Закрытие WebApp
+        tg.close(); 
       } catch (error) {
         alert("❌ Не удалось оформить заказ");
         console.error(error);
@@ -92,10 +94,10 @@ function App() {
         return prev.map((p) =>
           p === existing
             ? {
-                ...p,
-                qty: p.qty + product.qty,
-                fromStock: p.fromStock ?? false,
-              }
+              ...p,
+              qty: p.qty + product.qty,
+              fromStock: p.fromStock ?? false,
+            }
             : p
         );
       } else {
